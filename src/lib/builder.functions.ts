@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireFirebaseAuth } from "@/integrations/firebase/auth-middleware";
 import { apkName, APP_ID_RE, checkPassword, int, LOGO_RE, PACKAGE_RE, signPath, str, uuid, walletChange } from "@/lib/server-helpers";
 import { BASE_APKS } from "@/lib/base-apks";
+import { validateLogoUpload } from "@/lib/image-upload";
 
 type TemplateRow = {
   id: string; name: string; description: string; category: string; base_apk: string; html: string;
@@ -47,9 +48,8 @@ export const listTemplates = createServerFn({ method: "GET" }).handler(async () 
 });
 
 export const getTemplate = createServerFn({ method: "GET" })
-  .inputValidator((d: { id: string }) => ({ id: str(d?.id, "id", 64) }))
+  .inputValidator((d: { id: string }) => ({ id: uuid(d?.id) }))
   .handler(async ({ data }) => {
-    if (!/^[0-9a-f-]{36}$/i.test(data.id)) return null;
     const db = await adb();
     const row = await db.dbGet<Omit<TemplateRow, "id">>(`templates/${data.id}`);
     if (!row) return null;
@@ -58,14 +58,15 @@ export const getTemplate = createServerFn({ method: "GET" })
 
 /* ---------- Signed-in user ---------- */
 
-export const createLogoUploadUrl = createServerFn({ method: "POST" })
-  .inputValidator((d: { filename: string; contentType?: string }) => ({ filename: str(d?.filename, "File", 200), contentType: str(d?.contentType, "Type", 100, false) }))
-  .handler(async ({ data }) => {
-    const ext = (data.filename.split(".").pop() || "png").replace(/[^a-z0-9]/gi, "").slice(0, 8).toLowerCase();
-    if (!["png", "jpg", "jpeg", "webp"].includes(ext)) throw new Error("Logo must be PNG, JPG or WEBP");
-    const path = `logos/${crypto.randomUUID()}.${ext}`;
+export const uploadLogo = createServerFn({ method: "POST" })
+  .middleware([requireFirebaseAuth])
+  .inputValidator(validateLogoUpload)
+  .handler(async ({ data, context }) => {
+    const { uploadImage } = await import("@/lib/image-upload");
+    const url = await uploadImage(data.image);
+    const path = `logos/${crypto.randomUUID()}.${data.ext}`;
     const db = await adb();
-    const url = await db.storageCreateUploadUrl(path, data.contentType || "image/png");
+    await db.dbSet(`mediaFiles/${path.replace(/\./g, "_")}`, { url, user_id: context.userId });
     return { path, url };
   });
 
@@ -89,6 +90,8 @@ export const userBuild = createServerFn({ method: "POST" })
     if (!t) throw new Error("Template not found");
     if (t.base_apk === "teacher" && !data.app_id) throw new Error("App ID is required for this template");
     if (t.base_apk !== "teacher" && !data.register_link) throw new Error("Register link is required");
+    const media = await db.dbGet<{ user_id: string }>(`mediaFiles/${data.logo_path.replace(/\./g, "_")}`);
+    if (!media || media.user_id !== userId) throw new Error("Please upload your logo again");
     const profile = await db.dbGet<{ name?: string; email?: string }>(`profiles/${userId}`);
 
     if (t.price > 0) await walletChange(userId, -t.price, "build", `Build: ${data.app_name} (${t.name})`);

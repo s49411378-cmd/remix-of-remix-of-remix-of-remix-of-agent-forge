@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { createLogoUploadUrl, getTemplate, userBuild } from "@/lib/builder.functions";
+import { uploadLogo, getTemplate, userBuild } from "@/lib/builder.functions";
 import { baseApkLabel } from "@/lib/base-apks";
 import { productId } from "@/lib/product-id";
 import { useAuth } from "@/hooks/useAuth";
@@ -133,9 +133,13 @@ function BuildDialog({ open, onOpenChange, template }: { open: boolean; onOpenCh
     if (!logo) { toast.error("Choose a logo"); return; }
     setLoading(true);
     try {
-      const { path, url } = await createLogoUploadUrl({ data: { filename: logo.name, contentType: logo.type } });
-      const up = await fetch(url, { method: "PUT", headers: { "Content-Type": logo.type }, body: logo });
-      if (!up.ok) throw new Error("Logo upload failed");
+      const image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("Could not read logo"));
+        reader.onerror = () => reject(new Error("Could not read logo"));
+        reader.readAsDataURL(logo);
+      });
+      const { path } = await uploadLogo({ data: { filename: logo.name, image } });
       await userBuild({
         data: {
           template_id: template.id, app_name: appName, package_name: pkg, logo_path: path,
