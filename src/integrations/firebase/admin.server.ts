@@ -12,7 +12,13 @@ type ServiceAccount = { client_email: string; private_key: string; token_uri?: s
 function serviceAccount(): ServiceAccount {
   const raw = process.env["FIREBASE_SERVICE_ACCOUNT"];
   if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT not configured");
-  return JSON.parse(raw);
+  try {
+    const parsed = JSON.parse(raw) as ServiceAccount;
+    if (!parsed?.client_email || !parsed?.private_key) throw new Error("missing fields");
+    return parsed;
+  } catch {
+    throw new Error("FIREBASE_SERVICE_ACCOUNT is not a valid service-account JSON key");
+  }
 }
 
 /* ---------- base64url / PEM helpers ---------- */
