@@ -21,6 +21,8 @@ import { adminGetSettings, adminSaveSettings, adminListDeposits, adminDecideDepo
 import { adminListUsers, adminUpdateUser, adminAdjustBalance, adminDeleteUser, adminUserDetail } from "@/lib/users.functions";
 import { BASE_APKS, baseApkLabel } from "@/lib/base-apks";
 import { cn } from "@/lib/utils";
+import { QueryFeedback } from "@/components/QueryFeedback";
+import { withRequestTimeout } from "@/lib/request-timeout";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -523,17 +525,27 @@ function TemplateDialog({ pw, t, onClose }: { pw: string; t: Partial<Tpl>; onClo
 
 function SettingsTab({ pw }: { pw: string }) {
   const qc = useQueryClient();
-  const { data } = useQuery({ queryKey: ["adm", "settings"], queryFn: () => adminGetSettings({ data: { password: pw } }) });
+  const settings = useQuery({ queryKey: ["adm", "settings"], queryFn: () => withRequestTimeout(() => adminGetSettings({ data: { password: pw } })), retry: false });
+  const { data } = settings;
   const [v, setV] = useState<NonNullable<typeof data> | null>(null);
   useEffect(() => { if (data) setV(data); }, [data]);
   const [busy, setBusy] = useState(false);
-  if (!v) return <p className="text-sm text-muted-foreground">Loading…</p>;
+  if (!v) return <QueryFeedback failed={settings.isError} retry={() => settings.refetch()} label="settings" />;
   return (
     <form className="grid gap-4 lg:grid-cols-2" onSubmit={async (e) => {
       e.preventDefault(); setBusy(true);
       try { await adminSaveSettings({ data: { password: pw, ...v } }); toast.success("Settings saved"); qc.invalidateQueries({ queryKey: ["adm"] }); qc.invalidateQueries({ queryKey: ["site-settings"] }); } catch (x) { err(x); }
       setBusy(false);
     }}>
+      <section className="space-y-3 border-b border-border pb-5 lg:col-span-2">
+        <h2 className="font-semibold">Website name</h2>
+        <Input aria-label="Website name" required maxLength={80} value={v.site_name} onChange={(e) => setV({ ...v, site_name: e.target.value })} />
+      </section>
+      <section className="space-y-3 border-b border-border pb-5 lg:col-span-2">
+        <label className="flex items-center justify-between gap-3 font-semibold" htmlFor="announcement-enabled">Announcement <Switch id="announcement-enabled" checked={v.announcement_enabled} onCheckedChange={(enabled) => setV({ ...v, announcement_enabled: enabled })} /></label>
+        <Input aria-label="Announcement title" placeholder="Title (optional)" maxLength={120} value={v.announcement_title} onChange={(e) => setV({ ...v, announcement_title: e.target.value })} />
+        <Textarea aria-label="Announcement message" placeholder="Announcement message" required={v.announcement_enabled} maxLength={2000} rows={4} value={v.announcement_message} onChange={(e) => setV({ ...v, announcement_message: e.target.value })} />
+      </section>
       <section className={cn("surface space-y-3 p-5", v.maintenance_mode && "ring-2 ring-warning")}>
         <label className="flex items-center justify-between font-semibold">Maintenance mode <Switch checked={v.maintenance_mode} onCheckedChange={(c) => setV({ ...v, maintenance_mode: c })} /></label>
         <p className="text-xs text-muted-foreground">When on, visitors only see a maintenance screen. The admin panel keeps working.</p>

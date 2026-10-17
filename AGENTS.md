@@ -13,3 +13,4 @@
 - Mount profile completion inside the root auth provider and key its Firebase read by user ID; this covers every sign-in provider and avoids cross-account cached details.
 - Verify Firebase ID tokens with jose and Google's remote JWK set; X.509 certificates cannot be imported by merely relabeling their PEM header as an SPKI public key.
 - Account-page queries use bounded requests, explicit failure/retry feedback, and user-scoped query keys; failed requests must not remain indistinguishable from loading or leak cached account data.
+- Keep website identity and visitor announcements in Firebase settings/main, expose only public fields through the shared site-settings query, and authorize every settings write server-side; one source keeps admin changes consistent across visitor pages.
