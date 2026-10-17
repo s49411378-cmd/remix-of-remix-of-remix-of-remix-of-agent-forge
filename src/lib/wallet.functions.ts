@@ -33,9 +33,15 @@ async function readSettings(db: Awaited<ReturnType<typeof adb>>) {
 /* ---------- Public ---------- */
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
-  const db = await adb();
-  const s = await readSettings(db);
-  return { site_name: s.site_name, announcement_enabled: s.announcement_enabled, announcement_title: s.announcement_title, announcement_message: s.announcement_message, maintenance_mode: s.maintenance_mode, maintenance_message: s.maintenance_message, support_link: s.support_link };
+  try {
+    const db = await adb();
+    const s = await readSettings(db);
+    return { site_name: s.site_name, announcement_enabled: s.announcement_enabled, announcement_title: s.announcement_title, announcement_message: s.announcement_message, maintenance_mode: s.maintenance_mode, maintenance_message: s.maintenance_message, support_link: s.support_link };
+  } catch (e) {
+    // Public site must still render when the backend key is missing/invalid.
+    console.error("getSiteSettings failed:", e instanceof Error ? e.message : e);
+    return { site_name: siteName(null), announcement_enabled: false, announcement_title: "", announcement_message: "", maintenance_mode: false, maintenance_message: "", support_link: "" };
+  }
 });
 
 /* ---------- Signed-in user ---------- */
