@@ -15,3 +15,4 @@
 - Account-page queries use bounded requests, explicit failure/retry feedback, and user-scoped query keys; failed requests must not remain indistinguishable from loading or leak cached account data.
 - Keep website identity and visitor announcements in Firebase settings/main, expose only public fields through the shared site-settings query, and authorize every settings write server-side; one source keeps admin changes consistent across visitor pages.
 - Upload build logos through authenticated ImgBB server calls and store owner-scoped path-to-URL mappings in Firebase mediaFiles; resolve those mappings for orders and build callbacks because the configured Cloud Storage bucket is unavailable.
+- Shared surface and glass utilities own card/control treatment across routes; legacy clay classes are glass aliases to keep existing views consistent, with standard backdrop-filter only for production compatibility.

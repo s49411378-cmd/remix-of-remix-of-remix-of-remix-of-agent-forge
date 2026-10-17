@@ -152,7 +152,7 @@ function ProfileBody() {
 
   return (
     <div className="space-y-5">
-      <section className="surface clay flex flex-col items-center gap-4 p-6 text-center sm:flex-row sm:text-left">
+      <section className="surface flex flex-col items-center gap-4 p-6 text-center sm:flex-row sm:text-left">
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
@@ -189,7 +189,7 @@ function ProfileBody() {
         </div>
       </section>
 
-      <section className="surface clay space-y-4 p-5">
+      <section className="surface space-y-4 p-5">
         <h3 className="font-semibold">Edit profile</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -206,7 +206,7 @@ function ProfileBody() {
         </Button>
       </section>
 
-      <section className="surface clay space-y-4 p-5">
+      <section className="surface space-y-4 p-5">
         <h3 className="flex items-center gap-2 font-semibold"><KeyRound className="size-4" /> Change password</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <Input type="password" placeholder="New password" value={pw} onChange={(e) => setPw(e.target.value)} />
@@ -217,7 +217,7 @@ function ProfileBody() {
         </Button>
       </section>
 
-      <section className="surface clay space-y-3 p-5">
+      <section className="surface space-y-3 p-5">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">Recent builds</h3>
           <Link to="/orders" className="text-sm font-medium text-primary">View all</Link>
@@ -234,7 +234,7 @@ function ProfileBody() {
         ))}
       </section>
 
-      <section className="surface clay space-y-3 p-5">
+      <section className="surface space-y-3 p-5">
         <h3 className="font-semibold">Login history</h3>
         {!data.logins.length && <p className="text-sm text-muted-foreground">No logins recorded yet.</p>}
         {data.logins.map((l) => (
