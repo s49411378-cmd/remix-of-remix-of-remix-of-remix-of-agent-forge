@@ -70,8 +70,20 @@ export function UserTour() {
   const current = STEPS[step]!;
   const last = step === STEPS.length - 1;
 
+  function onBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
+    // First tap anywhere outside the card closes the tour; if that tap landed
+    // on a control underneath (e.g. the theme toggle), let it act too.
+    const overlay = e.currentTarget;
+    overlay.style.pointerEvents = "none";
+    finish();
+    const hit = document.elementFromPoint(e.clientX, e.clientY);
+    overlay.style.pointerEvents = "";
+    const btn = hit?.closest("button");
+    if (btn && btn !== e.target) btn.click();
+  }
+
   return createPortal(
-    <div onClick={finish} className="fixed inset-0 z-[100] flex items-end justify-center bg-background/70 p-4 backdrop-blur-sm sm:items-center" role="dialog" aria-modal="true" aria-label="App tour">
+    <div onClick={onBackdropClick} className="fixed inset-0 z-[100] flex items-end justify-center bg-background/70 p-4 backdrop-blur-sm sm:items-center" role="dialog" aria-modal="true" aria-label="App tour">
       <div onClick={(e) => e.stopPropagation()} className="surface w-full max-w-sm p-6 shadow-glow">
         <div className="flex items-start justify-between">
           <span className="grid size-12 place-items-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow">
