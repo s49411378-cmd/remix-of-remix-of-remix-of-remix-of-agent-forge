@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Current task
+- [ ] Replace clay UI with consistent glass cards and controls throughout user/admin pages; verify both themes and narrow screens.
 - [x] Fix build-logo upload 404 with authenticated ImgBB upload; real signup/free build tested in preview and live Vercel, saved image returned HTTP 200, live Orders displayed logo. APK completion remains unverified.
 - [x] Removed favicon and visible Lovable branding; deployed to Vercel tineshbuildercode, live page verified clean.
 - [x] Add admin-editable website name and visitor announcements; verified real admin save/readback, fresh visitor display, dismiss/return, disabled state and mobile layout; six targeted tests passed. Vercel not updated in this task.

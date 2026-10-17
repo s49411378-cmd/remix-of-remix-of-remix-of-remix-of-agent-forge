@@ -112,14 +112,14 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { data: wallet } = useWallet();
   return (
     <div className="min-h-screen pb-28">
-      <header className="sticky top-0 z-40 bg-background/70 backdrop-blur-lg">
+      <header className="sticky top-0 z-40 border-b border-glass-border glass-panel">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 sm:h-16">
           <Logo />
           <div className="ml-auto flex items-center gap-2">
             {user ? (
               <Link
                 to="/wallet"
-                className="flex items-center gap-1.5 rounded-full bg-card clay px-3.5 py-2 text-sm font-semibold transition hover:-translate-y-0.5"
+                className="flex items-center gap-1.5 rounded-full border glass-panel px-3.5 py-2 text-sm font-semibold transition hover:-translate-y-0.5"
               >
                 <Wallet className="size-4 text-primary" /> {wallet ? `₹${wallet.balance}` : "—"}
               </Link>

@@ -109,7 +109,7 @@ function Panel({ pw, logout }: { pw: string; logout: () => void }) {
 
   return (
     <div className="min-h-screen md:flex">
-      <aside className="border-b border-border bg-card/60 backdrop-blur md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0 md:border-b-0 md:border-r">
+      <aside className="border-b border-glass-border glass-panel md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0 md:border-b-0 md:border-r">
         <div className="flex items-center gap-2 px-4 py-4">
           <span className="grid size-9 place-items-center rounded-xl bg-gradient-primary shadow-glow"><Shield className="size-4 text-primary-foreground" /></span>
           <span className="font-display text-lg font-bold">Admin</span>
