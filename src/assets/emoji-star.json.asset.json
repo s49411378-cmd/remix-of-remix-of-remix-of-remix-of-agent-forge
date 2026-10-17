@@ -1,11 +1,11 @@
 {
+  "version": 1,
   "asset_id": "e6bde922-9ebb-4428-9ca7-463ae20b03db",
-  "content_type": "application/json",
-  "created_at": "2026-10-17T10:55:29Z",
-  "original_filename": "emoji-star.json",
-  "project_id": "d6271a2a-99fb-4086-b801-1e4c569d35c3",
-  "r2_key": "a/v1/d6271a2a-99fb-4086-b801-1e4c569d35c3/e6bde922-9ebb-4428-9ca7-463ae20b03db/emoji-star.json",
-  "size": 757409,
+  "project_id": "4ac7c5e1-8e94-4c82-89f8-fa4c70d8f499",
   "url": "/__l5e/assets-v1/e6bde922-9ebb-4428-9ca7-463ae20b03db/emoji-star.json",
-  "version": 1
+  "r2_key": "a/v1/4ac7c5e1-8e94-4c82-89f8-fa4c70d8f499/e6bde922-9ebb-4428-9ca7-463ae20b03db/emoji-star.json",
+  "original_filename": "emoji-star.json",
+  "size": 757409,
+  "content_type": "application/json",
+  "created_at": "2026-10-17T10:55:29Z"
 }
