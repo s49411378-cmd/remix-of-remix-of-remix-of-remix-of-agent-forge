@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Reset copied migration history as a directory and use the migration tool to regenerate its metadata; never hand-edit journals or snapshots, so Drizzle remains the metadata owner.
+- Mount profile completion inside the root auth provider and key its Firebase read by user ID; this covers every sign-in provider and avoids cross-account cached details.
+- Verify Firebase ID tokens with jose and Google's remote JWK set; X.509 certificates cannot be imported by merely relabeling their PEM header as an SPKI public key.
+- Account-page queries use bounded requests, explicit failure/retry feedback, and user-scoped query keys; failed requests must not remain indistinguishable from loading or leak cached account data.

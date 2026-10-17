@@ -1,0 +1,75 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Download, Package } from "lucide-react";
+import { AppShell, PageHeader, RequireAuth } from "@/components/AppShell";
+import { myBuilds } from "@/lib/builder.functions";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/StatusBadge";
+import { QueryFeedback } from "@/components/QueryFeedback";
+import { withRequestTimeout } from "@/lib/request-timeout";
+import { useAuth } from "@/hooks/useAuth";
+
+export const Route = createFileRoute("/orders")({
+  head: () => ({
+    meta: [
+      { title: "My Orders — AppForge" },
+      { name: "description", content: "Track your app builds and download finished APKs." },
+      { property: "og:title", content: "My Orders — AppForge" },
+      { property: "og:description", content: "Track your app builds and download finished APKs." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
+  component: () => (
+    <AppShell>
+      <main className="mx-auto max-w-3xl px-4 py-6">
+        <PageHeader title="My Orders" subtitle="Every app you have built." />
+        <RequireAuth>
+          <Orders />
+        </RequireAuth>
+      </main>
+    </AppShell>
+  ),
+});
+
+function Orders() {
+  const { user } = useAuth();
+  const fetchBuilds = useServerFn(myBuilds);
+  const { data, isError, refetch } = useQuery({ queryKey: ["my-builds", user?.uid], queryFn: () => withRequestTimeout(() => fetchBuilds()), refetchInterval: 15000, retry: false });
+  if (!data) return <QueryFeedback label="your orders" failed={isError} retry={() => refetch()} />;
+  if (!data.length)
+    return (
+      <div className="surface clay p-10 text-center">
+        <Package className="mx-auto size-10 text-primary" />
+        <p className="mt-3 font-semibold">No orders yet</p>
+        <Button asChild variant="hero" className="mt-4"><Link to="/">Browse templates</Link></Button>
+      </div>
+    );
+  return (
+    <div className="space-y-3">
+      {data.map((b) => (
+        <div key={b.id} className="surface clay flex items-center gap-3 p-4">
+          {b.logo ? (
+            <img src={b.logo} alt="" className="size-12 shrink-0 rounded-2xl object-cover" />
+          ) : (
+            <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gradient-primary text-primary-foreground"><Package className="size-5" /></span>
+          )}
+          <div className="min-w-0 flex-1">
+            <div className="truncate font-semibold">{b.app_name}</div>
+            <div className="truncate text-xs text-muted-foreground">{b.package_name}</div>
+            <div className="truncate text-xs text-muted-foreground">
+              {b.template_name} · ₹{b.charged} · {new Date(b.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <StatusBadge status={b.status} />
+            {b.download && (
+              <Button asChild size="sm" variant="hero"><a href={b.download}><Download className="size-4" /> APK</a></Button>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
