@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Current task
+- [ ] Add admin-editable website name and visitor announcements; verify saving and public display.
 - [x] Create root agent_memory.md with safe project context; deploy latest fixes to Vercel and verify live signup, profile saving, wallet, leaderboard and orders.
 - [x] Fix endless loading on profile, wallet, leaderboard and orders; verified real signed-in data and failed-request retry recovery on all four pages.
 - [x] Require missing name and Telegram username after any sign-in and save the Firebase profile.
