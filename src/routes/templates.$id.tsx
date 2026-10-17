@@ -13,6 +13,7 @@ import { uploadLogo, getTemplate, userBuild } from "@/lib/builder.functions";
 import { baseApkLabel } from "@/lib/base-apks";
 import { productId } from "@/lib/product-id";
 import { useAuth } from "@/hooks/useAuth";
+import { HackerLoader } from "@/components/effects/HackerLoader";
 
 const templateQuery = (id: string) => queryOptions({ queryKey: ["template", id], queryFn: () => getTemplate({ data: { id } }) });
 
@@ -116,7 +117,6 @@ function BuildDialog({ open, onOpenChange, template }: { open: boolean; onOpenCh
   const qc = useQueryClient();
   const [step, setStep] = useState<Step>("details");
   const [appName, setAppName] = useState("");
-  const [pkg, setPkg] = useState("");
   const [extra, setExtra] = useState("");
   const [logo, setLogo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -142,7 +142,7 @@ function BuildDialog({ open, onOpenChange, template }: { open: boolean; onOpenCh
       const { path } = await uploadLogo({ data: { filename: logo.name, image } });
       await userBuild({
         data: {
-          template_id: template.id, app_name: appName, package_name: pkg, logo_path: path,
+          template_id: template.id, app_name: appName, logo_path: path,
           app_id: isTeacher ? extra : "", register_link: isTeacher ? "" : extra,
         },
       });
@@ -161,7 +161,7 @@ function BuildDialog({ open, onOpenChange, template }: { open: boolean; onOpenCh
   }
 
   return (
-    <Dialog open={open} onOpenChange={close}>
+    <Dialog open={open} onOpenChange={(value) => { if (!loading) close(value); }}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Build “{template.name}”</DialogTitle>
@@ -188,7 +188,7 @@ function BuildDialog({ open, onOpenChange, template }: { open: boolean; onOpenCh
                 <div className="space-y-1.5"><Label htmlFor="app">App name</Label><Input id="app" value={appName} onChange={(e) => setAppName(e.target.value)} required maxLength={60} placeholder="My App" /></div>
                 <div className="space-y-1.5">
                   <Label htmlFor="pkg">Package name</Label>
-                  <Input id="pkg" value={pkg} onChange={(e) => setPkg(e.target.value)} required placeholder="com.myapp.android" pattern="[a-zA-Z][\w]*(\.[a-zA-Z][\w]*)+" title="Like com.company.app" />
+                  <Input id="pkg" value="Auto-assigned on build" readOnly className="font-mono" />
                 </div>
                 <Button type="submit" variant="hero">Next</Button>
               </form>
@@ -216,7 +216,7 @@ function BuildDialog({ open, onOpenChange, template }: { open: boolean; onOpenCh
                 <div className="flex gap-2">
                   <Button type="button" variant="outline" className="flex-1" onClick={() => setStep("extra")}>Back</Button>
                   <Button variant="hero" className="flex-1" disabled={loading || !logo} onClick={build}>
-                    <Hammer className="size-4" /> {loading ? "Building…" : template.price > 0 ? `Build — ₹${template.price}` : "Build"}
+                    {loading ? <HackerLoader compact label="Building your app" /> : <><Hammer className="size-4" />{template.price > 0 ? `Build — ₹${template.price}` : "Build"}</>}
                   </Button>
                 </div>
               </div>

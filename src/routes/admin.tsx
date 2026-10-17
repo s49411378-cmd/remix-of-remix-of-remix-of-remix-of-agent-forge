@@ -21,6 +21,7 @@ import { adminGetSettings, adminSaveSettings, adminListDeposits, adminDecideDepo
 import { adminListUsers, adminUpdateUser, adminAdjustBalance, adminDeleteUser, adminUserDetail } from "@/lib/users.functions";
 import { BASE_APKS, baseApkLabel } from "@/lib/base-apks";
 import { cn } from "@/lib/utils";
+import { HackerLoader, LoadingPanel } from "@/components/effects/HackerLoader";
 import { QueryFeedback } from "@/components/QueryFeedback";
 import { withRequestTimeout } from "@/lib/request-timeout";
 
@@ -79,7 +80,7 @@ function AdminLogin({ onOk }: { onOk: (p: string) => void }) {
         </div>
         <h1 className="text-2xl font-bold">Admin panel</h1>
         <Input type="password" placeholder="Admin password" value={v} onChange={(e) => setV(e.target.value)} autoFocus />
-        <Button variant="hero" className="w-full" disabled={busy || !v}><Lock className="size-4" /> Unlock</Button>
+        <Button variant="hero" className="w-full" disabled={busy || !v}>{busy ? <HackerLoader compact /> : <><Lock className="size-4" /> Unlock</>}</Button>
       </form>
     </main>
   );
@@ -258,7 +259,7 @@ function Builds({ pw }: { pw: string }) {
     <>
       <Toolbar q={q} setQ={setQ} filters={["all", "pending", "building", "success", "failed", "rejected"]} filter={f} setFilter={setF}
         onExport={() => csv("builds.csv", rows.map(({ id, app_name, package_name, template_name, requester_email, status, charged, created_at }) => ({ id, app_name, package_name, template_name, requester_email, status, charged, created_at })))} />
-      {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+      {isLoading && <LoadingPanel />}
       <div className="grid gap-3">
         {rows.map((r) => (
           <div key={r.id} className="surface flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
@@ -316,7 +317,7 @@ function Deposits({ pw }: { pw: string }) {
     <>
       <Toolbar q={q} setQ={setQ} filters={["pending", "approved", "rejected", "all"]} filter={f} setFilter={setF}
         onExport={() => csv("deposits.csv", rows.map(({ id, user_email, amount, utr, status, created_at }) => ({ id, user_email, amount, utr, status, created_at })))} />
-      {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+      {isLoading && <LoadingPanel />}
       <div className="grid gap-3">
         {rows.map((d) => (
           <div key={d.id} className="surface flex flex-wrap items-center gap-3 p-4">
@@ -356,7 +357,7 @@ function UsersTab({ pw }: { pw: string }) {
     <>
       <Toolbar q={q} setQ={setQ} filters={["newest", "balance", "builds"]} filter={sort} setFilter={setSort}
         onExport={() => csv("users.csv", rows.map(({ id, name, email, telegram_id, balance, builds, created_at }) => ({ id, name, email, telegram_id, balance, builds, created_at })))} />
-      {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+      {isLoading && <LoadingPanel />}
       <div className="surface overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-left text-xs text-muted-foreground">
@@ -408,7 +409,7 @@ function UserDialog({ pw, user, onClose }: { pw: string; user: UserRow; onClose:
             <h3 className="text-sm font-semibold">Profile</h3>
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
             <Input value={tg} onChange={(e) => setTg(e.target.value)} placeholder="Telegram username" />
-            <Button size="sm" variant="hero" disabled={busy} onClick={() => run(async () => { await adminUpdateUser({ data: { password: pw, id: user.id, name, telegram_id: tg } }); toast.success("Saved"); refresh(); })}>Save profile</Button>
+            <Button size="sm" variant="hero" disabled={busy} onClick={() => run(async () => { await adminUpdateUser({ data: { password: pw, id: user.id, name, telegram_id: tg } }); toast.success("Saved"); refresh(); })}>{busy ? <HackerLoader compact label="Saving profile" /> : "Save profile"}</Button>
           </section>
           <section className="space-y-2 rounded-2xl bg-muted/50 p-4 clay-inset">
             <div className="flex items-center justify-between"><h3 className="text-sm font-semibold">Wallet</h3><span className="text-xl font-bold text-primary">₹{balance}</span></div>
@@ -465,7 +466,7 @@ function Templates({ pw }: { pw: string }) {
         <div className="flex-1"><Toolbar q={q} setQ={setQ} /></div>
         <Button variant="hero" onClick={() => setEdit({ base_apk: "bingo", price: 0, show_preview: true, html: "" })}><Plus className="size-4" /> New</Button>
       </div>
-      {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+      {isLoading && <LoadingPanel />}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((t) => (
           <div key={t.id} className="surface overflow-hidden">
@@ -516,7 +517,7 @@ function TemplateDialog({ pw, t, onClose }: { pw: string; t: Partial<Tpl>; onClo
           </div>
           <Textarea placeholder="HTML" value={v.html} onChange={set("html")} rows={8} className="font-mono text-xs" required />
           <label className="flex items-center justify-between text-sm">Show live preview to users <Switch checked={v.show_preview} onCheckedChange={(c) => setV({ ...v, show_preview: c })} /></label>
-          <Button variant="hero" className="w-full" disabled={busy}>Save template</Button>
+          <Button variant="hero" className="w-full" disabled={busy}>{busy ? <HackerLoader compact label="Saving template" /> : "Save template"}</Button>
         </form>
       </DialogContent>
     </Dialog>
@@ -561,7 +562,7 @@ function SettingsTab({ pw }: { pw: string }) {
         <Input placeholder="https://t.me/yoursupport" value={v.support_link} onChange={(e) => setV({ ...v, support_link: e.target.value })} />
         <p className="text-xs text-muted-foreground">Used by "Contact support" buttons on profile, wallet and maintenance screens.</p>
       </section>
-      <Button variant="hero" className="lg:col-span-2" disabled={busy}>Save settings</Button>
+      <Button variant="hero" className="lg:col-span-2" disabled={busy}>{busy ? <HackerLoader compact label="Saving settings" /> : "Save settings"}</Button>
     </form>
   );
 }

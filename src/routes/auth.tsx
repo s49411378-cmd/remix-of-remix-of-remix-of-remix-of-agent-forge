@@ -23,12 +23,14 @@ function friendly(err: unknown): string {
 function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [loading, setLoading] = useState(false);
+  const [busyAction, setBusyAction] = useState<"email" | "google" | null>(null);
   const navigate = useNavigate();
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const email = String(f.get("email")), password = String(f.get("password"));
     setLoading(true);
+    setBusyAction("email");
     try {
       await firebaseReady();
       if (mode === "login") await signInWithEmailAndPassword(fbAuth(), email, password);
@@ -42,16 +44,23 @@ function AuthPage() {
       toast.error(friendly(err));
     } finally {
       setLoading(false);
+      setBusyAction(null);
     }
   }
   async function google() {
+    if (loading) return;
+    setLoading(true);
+    setBusyAction("google");
     try {
       await firebaseReady();
       await signInWithPopup(fbAuth(), new GoogleAuthProvider());
       navigate({ to: "/" });
     } catch (err) {
       toast.error(friendly(err));
+    } finally {
+      setLoading(false);
+      setBusyAction(null);
     }
   }
-  return <LoginScreen mode={mode} loading={loading} onSubmit={submit} onGoogle={google} onModeChange={() => setMode(mode === "login" ? "signup" : "login")} />;
+  return <LoginScreen mode={mode} loading={loading} busyAction={busyAction} onSubmit={submit} onGoogle={google} onModeChange={() => setMode(mode === "login" ? "signup" : "login")} />;
 }

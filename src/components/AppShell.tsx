@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { withRequestTimeout } from "@/lib/request-timeout";
 import { useSiteName } from "@/hooks/useSiteSettings";
+import { LoadingPanel } from "@/components/effects/HackerLoader";
+import { LottieIcon } from "@/components/effects/LottieIcon";
+import star from "@/assets/emoji-star.json.asset.json";
+import verified from "@/assets/emoji-verified.json.asset.json";
 import { UserBackground } from "@/components/effects/UserBackground";
 
 export function Logo({ to = "/" }: { to?: "/" }) {
@@ -66,11 +70,8 @@ function DockLink({ to, label, Icon }: (typeof NAV)[number]) {
       aria-label={label}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative flex shrink-0 items-center gap-2 rounded-full px-3 py-2.5 text-sm font-semibold transition-all duration-300 ease-out",
-        "hover:-translate-y-1 active:translate-y-0 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        active
-          ? "bg-primary text-primary-foreground clay-btn shadow-glow"
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+        "group flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-md px-2 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
       )}
     >
       <Icon
@@ -81,8 +82,7 @@ function DockLink({ to, label, Icon }: (typeof NAV)[number]) {
       />
       <span
         className={cn(
-          "overflow-hidden whitespace-nowrap transition-all duration-300 max-sm:hidden",
-          active ? "max-w-24 opacity-100" : "max-w-0 opacity-0 group-hover:max-w-24 group-hover:opacity-100",
+          "whitespace-nowrap text-[10px] sm:text-xs",
         )}
       >
         {label}
@@ -97,12 +97,12 @@ function CapsuleDock() {
       aria-label="Main navigation"
       className="fixed inset-x-0 bottom-0 z-50 flex justify-center px-3 pb-safe"
     >
-      <div className="capsule-dock dock-in flex max-w-[calc(100vw-1.5rem)] items-center gap-1 border border-border/60 p-1.5">
+      <div className="capsule-dock dock-in flex w-full max-w-lg items-center gap-1 border border-border/60 p-1.5">
         {NAV.map((item) => (
           <DockLink key={item.to} {...item} />
         ))}
         <span aria-hidden className="mx-1 h-6 w-px shrink-0 bg-border" />
-        <ThemeToggle className="size-9 shrink-0 hover:-translate-y-1" />
+        <ThemeToggle className="size-9 shrink-0 hover:bg-accent" />
       </div>
     </nav>
   );
@@ -145,7 +145,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   return (
     <div className="mb-5 flex items-end justify-between gap-3">
       <div>
-        <h1 className="text-2xl font-bold sm:text-3xl">{title}</h1>
+        <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">{title}{title === "Profile" ? <LottieIcon src={verified.url} className="size-7" /> : title === "Leaderboard" ? <LottieIcon src={star.url} className="size-7" /> : null}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action}
@@ -159,7 +159,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth", replace: true });
   }, [loading, user, navigate]);
-  if (loading) return <div className="grid h-64 place-items-center text-sm text-muted-foreground">Loading…</div>;
+  if (loading) return <LoadingPanel />;
   if (!user) {
     return (
       <div className="surface mx-auto mt-6 max-w-sm p-8 text-center">

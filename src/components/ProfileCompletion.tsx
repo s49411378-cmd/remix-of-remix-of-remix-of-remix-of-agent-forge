@@ -7,6 +7,8 @@ import { fbAuth } from "@/integrations/firebase/client";
 import { getProfileCompletion, updateMyProfile } from "@/lib/users.functions";
 import { needsProfileCompletion } from "@/lib/profile-completion";
 import { Button } from "@/components/ui/button";
+import { HackerLoader } from "@/components/effects/HackerLoader";
+import { LoadingPanel } from "@/components/effects/HackerLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -60,7 +62,7 @@ export function ProfileCompletion() {
           <DialogTitle>Complete your profile</DialogTitle>
           <DialogDescription>Your name and Telegram username</DialogDescription>
         </DialogHeader>
-        {profile.isPending ? <p className="text-sm text-muted-foreground">Loading your details…</p> : profile.isError ? (
+        {profile.isPending ? <LoadingPanel /> : profile.isError ? (
           <div className="space-y-3">
             <p role="alert" className="text-sm text-destructive">Could not load your profile. Please try again.</p>
             <Button className="w-full" onClick={() => profile.refetch()}>Try again</Button>
@@ -77,7 +79,7 @@ export function ProfileCompletion() {
             </div>
             {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
             <Button variant="hero" type="submit" className="w-full" disabled={saving || !name.trim() || !telegram.trim().replace(/^@/, "")}>
-              {saving ? "Saving…" : "Save and continue"}
+              {saving ? <HackerLoader compact label="Saving your profile" /> : "Save and continue"}
             </Button>
           </form>
         )}
