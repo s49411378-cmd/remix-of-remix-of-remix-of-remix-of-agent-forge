@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Current task
+- [ ] Add uploaded login video, inline emoji, user-page hacker background and splash cursor; verify transparent glass and working controls.
 - [x] Replace all five remix secrets through the secure form (latest remix).
 - [x] Clear copied Drizzle migration history and regenerate an empty baseline for this remix without changing stored data; verified one generated journal entry, empty schema snapshot, and no executable SQL.
 - [ ] Replace clay UI with consistent glass cards and controls throughout user/admin pages; verify both themes and narrow screens.
