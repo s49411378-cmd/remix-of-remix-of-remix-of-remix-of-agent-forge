@@ -1,6 +1,8 @@
 # Roadmap
 
 ## Current task
+- [x] Replace all five remix secrets through the secure form.
+- [x] Clear copied Drizzle migration history and regenerate an empty baseline for this remix without changing stored data; verified one generated journal entry, empty schema snapshot, and no executable SQL.
 - [ ] Replace clay UI with consistent glass cards and controls throughout user/admin pages; verify both themes and narrow screens.
 - [x] Fix build-logo upload 404 with authenticated ImgBB upload; real signup/free build tested in preview and live Vercel, saved image returned HTTP 200, live Orders displayed logo. APK completion remains unverified.
 - [x] Removed favicon and visible Lovable branding; deployed to Vercel tineshbuildercode, live page verified clean.
