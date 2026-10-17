@@ -1,7 +1,7 @@
 # Roadmap
 
 ## Current task
-- [ ] Remove favicon and visible Lovable branding; deploy to Vercel and verify the shared link. Lovable badge setting change was declined.
+- [x] Removed favicon and visible Lovable branding; deployed to Vercel tineshbuildercode, live page verified clean.
 - [x] Add admin-editable website name and visitor announcements; verified real admin save/readback, fresh visitor display, dismiss/return, disabled state and mobile layout; six targeted tests passed. Vercel not updated in this task.
 - [x] Create root agent_memory.md with safe project context; deploy latest fixes to Vercel and verify live signup, profile saving, wallet, leaderboard and orders.
 - [x] Fix endless loading on profile, wallet, leaderboard and orders; verified real signed-in data and failed-request retry recovery on all four pages.
