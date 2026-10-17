@@ -1,6 +1,9 @@
 # Roadmap
 
 ## Current task
+- [ ] Apply uploaded hacker loader to page, skeleton and action loading; match hacker glass colors; remove splash cursor; stabilize navigation; add suitable animated emoji.
+- [ ] Randomize new APK packages from com.tineshmod.a1 to com.tineshmod.a10 and run rule tests.
+- [ ] Apply separate Google button artwork when supplied (waiting for asset).
 - [ ] Add uploaded login video, inline emoji, user-page hacker background and splash cursor; verify transparent glass and working controls.
 - [x] Replace all five remix secrets through the secure form (latest remix).
 - [x] Clear copied Drizzle migration history and regenerate an empty baseline for this remix without changing stored data; verified one generated journal entry, empty schema snapshot, and no executable SQL.
