@@ -17,6 +17,8 @@ import { ProfileCompletion } from "@/components/ProfileCompletion";
 import { UserTour } from "@/components/UserTour";
 import { themeInitScript } from "@/lib/theme";
 import { getSiteSettings } from "@/lib/wallet.functions";
+import { siteSettingsQuery } from "@/hooks/useSiteSettings";
+import { SiteAnnouncement } from "@/components/SiteAnnouncement";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -109,12 +111,13 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-export const siteSettingsQuery = { queryKey: ["site-settings"], queryFn: () => getSiteSettings(), staleTime: 30_000 };
+export { siteSettingsQuery } from "@/hooks/useSiteSettings";
 
 function MaintenanceGate({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const { data } = useQuery(siteSettingsQuery);
-  if (pathname.startsWith("/admin") || !data?.maintenance_mode) return <>{children}</>;
+  if (pathname.startsWith("/admin")) return <>{children}</>;
+  if (!data?.maintenance_mode) return <><SiteAnnouncement />{children}</>;
   return (
     <div className="grid min-h-screen place-items-center bg-background px-6">
       <div className="max-w-sm text-center">

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireFirebaseAuth } from "@/integrations/firebase/auth-middleware";
 import { checkPassword, int, str, walletChange } from "@/lib/server-helpers";
+import { siteName, validateSiteIdentity, type SiteIdentity } from "@/lib/site-settings";
 
 async function adb() {
   return import("@/integrations/firebase/admin.server");
@@ -10,13 +11,17 @@ function keyed<T extends object>(rec: Record<string, T> | null): (T & { id: stri
   return Object.entries(rec ?? {}).map(([id, v]) => ({ ...v, id }));
 }
 
-type Settings = { upi_id?: string; min_deposit?: number; maintenance_mode?: boolean; maintenance_message?: string; support_link?: string };
+type Settings = SiteIdentity & { upi_id?: string; min_deposit?: number; maintenance_mode?: boolean; maintenance_message?: string; support_link?: string };
 type Deposit = { user_id: string; user_email?: string; amount: number; utr: string; status: string; created_at: string; updated_at?: string };
 type Tx = { amount: number; kind: string; note: string; created_at: string };
 
 async function readSettings(db: Awaited<ReturnType<typeof adb>>) {
   const data = await db.dbGet<Settings>("settings/main");
   return {
+    site_name: siteName(data),
+    announcement_enabled: data?.announcement_enabled ?? false,
+    announcement_title: data?.announcement_title ?? "",
+    announcement_message: data?.announcement_message ?? "",
     upi_id: data?.upi_id ?? "",
     min_deposit: data?.min_deposit ?? 100,
     maintenance_mode: data?.maintenance_mode ?? false,
@@ -30,7 +35,7 @@ async function readSettings(db: Awaited<ReturnType<typeof adb>>) {
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
   const db = await adb();
   const s = await readSettings(db);
-  return { maintenance_mode: s.maintenance_mode, maintenance_message: s.maintenance_message, support_link: s.support_link };
+  return { site_name: s.site_name, announcement_enabled: s.announcement_enabled, announcement_title: s.announcement_title, announcement_message: s.announcement_message, maintenance_mode: s.maintenance_mode, maintenance_message: s.maintenance_message, support_link: s.support_link };
 });
 
 /* ---------- Signed-in user ---------- */
@@ -97,6 +102,7 @@ export const adminSaveSettings = createServerFn({ method: "POST" })
     if (link && !/^(https?:\/\/|mailto:|tel:)\S+$/i.test(link)) throw new Error("Support link must start with https://, mailto: or tel:");
     return {
       password: d?.["password"] as string,
+      ...validateSiteIdentity(d),
       upi_id: str(d?.["upi_id"], "UPI ID", 100, false),
       min_deposit: int(d?.["min_deposit"], "min deposit", 1, 1_000_000),
       maintenance_mode: d?.["maintenance_mode"] === true,
@@ -108,7 +114,7 @@ export const adminSaveSettings = createServerFn({ method: "POST" })
     checkPassword(data.password);
     const { password: _p, ...fields } = data;
     const db = await adb();
-    await db.dbSet("settings/main", { ...fields, updated_at: new Date().toISOString() });
+    await db.dbUpdate("settings/main", { ...fields, updated_at: new Date().toISOString() });
     return { ok: true };
   });
 

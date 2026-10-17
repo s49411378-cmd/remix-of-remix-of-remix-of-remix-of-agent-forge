@@ -10,12 +10,14 @@ import { getWalletInfo } from "@/lib/wallet.functions";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { withRequestTimeout } from "@/lib/request-timeout";
+import { useSiteName } from "@/hooks/useSiteSettings";
 
 export function Logo({ to = "/" }: { to?: "/" }) {
+  const name = useSiteName();
   return (
-    <Link to={to} className="flex items-center gap-2 font-display text-lg font-bold">
-      <img src={logoImg} alt="AppForge logo" width={32} height={32} className="size-8 shrink-0 shadow-glow rounded-xl" />
-      AppForge
+    <Link to={to} className="flex min-w-0 items-center gap-2 font-display text-lg font-bold">
+      <img src={logoImg} alt={`${name} logo`} width={32} height={32} className="size-8 shrink-0 shadow-glow rounded-xl" />
+      <span className="line-clamp-2 break-words text-sm leading-tight sm:text-lg">{name}</span>
     </Link>
   );
 }
