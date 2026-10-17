@@ -121,3 +121,9 @@ Tests: `src/test/request-timeout.test.ts`, `src/test/profile-completion.test.ts`
 - Theme defaults to dark for new visitors; saved choice still respected (src/lib/theme.ts, key "builder-theme").
 - New-user tour: src/components/UserTour.tsx (5 steps, localStorage key "appforge-tour-done"), mounted in __root after ProfileCompletion.
 - Home page: centered heading + short subtitle + three feature badges, then the sticky search/filter bar. No hero image (removed on request; src/assets/hero.png and hero.jpg deleted).
+## Build-logo upload repair (October 17, 2026)
+- Both Google Storage bucket names returned HTTP 404 during real checks. The user-supplied ImgBB key was valid and saved securely as IMGBB_API_KEY in this project and Vercel; never record its value.
+- Build logos now upload through authenticated uploadLogo, use owner-scoped Firebase mediaFiles mappings and resolve to ImgBB for Orders/admin/build callbacks. Profile photos share the same safe ImgBB helper.
+- getTemplate accepts safe Firebase push IDs rather than UUID-only IDs.
+- Preview and live Vercel real signup/free-request tests passed; saved logo fetched as HTTP 200 image/png and the live Orders page rendered it. Deployment tineshbuildercode-j3n060j6n-instaboosterwesds-projects.vercel.app was Ready and aliased to tineshautomarketv1.vercel.app.
+- Full APK completion/download is not verified. APK output, template videos and old missing Google Storage objects are not repaired by the logo change. Temporary test template was removed after the upload check.

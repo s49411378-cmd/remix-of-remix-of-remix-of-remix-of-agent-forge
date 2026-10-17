@@ -1,7 +1,7 @@
 # Roadmap
 
 ## Current task
-- [ ] Fix build-logo upload 404, verify real image upload/readback, and update Vercel.
+- [x] Fix build-logo upload 404 with authenticated ImgBB upload; real signup/free build tested in preview and live Vercel, saved image returned HTTP 200, live Orders displayed logo. APK completion remains unverified.
 - [x] Removed favicon and visible Lovable branding; deployed to Vercel tineshbuildercode, live page verified clean.
 - [x] Add admin-editable website name and visitor announcements; verified real admin save/readback, fresh visitor display, dismiss/return, disabled state and mobile layout; six targeted tests passed. Vercel not updated in this task.
 - [x] Create root agent_memory.md with safe project context; deploy latest fixes to Vercel and verify live signup, profile saving, wallet, leaderboard and orders.
@@ -25,5 +25,6 @@
 
 ## Open
 - Funded build/logo upload/GitHub callback/download flow: requires a configured template and funded test account; not verified in the latest account-page checks.
+- APK/video/template storage remains unavailable: both configured Google Storage bucket names returned 404; build logos now use ImgBB, but this does not repair APK output uploads or old missing images.
 - Admin password: currently opens with the default "devdev" until a private one is set
 - Admin templates: allow uploading a new photo/video for a template (edits today keep the pictures a template already has)
