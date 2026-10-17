@@ -16,7 +16,6 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileCompletion } from "@/components/ProfileCompletion";
 import { UserTour } from "@/components/UserTour";
 import { themeInitScript } from "@/lib/theme";
-import { getSiteSettings } from "@/lib/wallet.functions";
 import { siteSettingsQuery } from "@/hooks/useSiteSettings";
 import { SiteAnnouncement } from "@/components/SiteAnnouncement";
 

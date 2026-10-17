@@ -530,7 +530,7 @@ function SettingsTab({ pw }: { pw: string }) {
   const [v, setV] = useState<NonNullable<typeof data> | null>(null);
   useEffect(() => { if (data) setV(data); }, [data]);
   const [busy, setBusy] = useState(false);
-  if (!v) return <QueryFeedback query={settings} loading="Loading settings…" />;
+  if (!v) return <QueryFeedback failed={settings.isError} retry={() => settings.refetch()} label="settings" />;
   return (
     <form className="grid gap-4 lg:grid-cols-2" onSubmit={async (e) => {
       e.preventDefault(); setBusy(true);

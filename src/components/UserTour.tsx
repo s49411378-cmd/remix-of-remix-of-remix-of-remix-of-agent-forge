@@ -3,6 +3,8 @@ import { createPortal } from "react-dom";
 import { Home, Wallet, Package, Trophy, User, X, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { siteName, visibleAnnouncement } from "@/lib/site-settings";
 
 const KEY = "appforge-tour-done";
 
@@ -35,6 +37,7 @@ const STEPS = [
 ] as const;
 
 export function UserTour() {
+  const { data: settings } = useSiteSettings();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
@@ -56,7 +59,7 @@ export function UserTour() {
     return () => window.removeEventListener("appforge-dismiss-tour", onDismiss);
   }, []);
 
-  if (!open) return null;
+  if (!open || visibleAnnouncement(settings)) return null;
 
   function finish() {
     try {
@@ -93,7 +96,7 @@ export function UserTour() {
             <X className="size-4" />
           </button>
         </div>
-        <h2 className="mt-4 text-lg font-bold">{current.title}</h2>
+        <h2 className="mt-4 text-lg font-bold">{step === 0 ? `Welcome to ${siteName(settings)}` : current.title}</h2>
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{current.body}</p>
         <div className="mt-5 flex items-center justify-between">
           <div className="flex gap-1.5">
