@@ -44,6 +44,16 @@ export function UserTour() {
     } catch {
       /* ignore */
     }
+    function onDismiss() {
+      try {
+        localStorage.setItem(KEY, "1");
+      } catch {
+        /* ignore */
+      }
+      setOpen(false);
+    }
+    window.addEventListener("appforge-dismiss-tour", onDismiss);
+    return () => window.removeEventListener("appforge-dismiss-tour", onDismiss);
   }, []);
 
   if (!open) return null;

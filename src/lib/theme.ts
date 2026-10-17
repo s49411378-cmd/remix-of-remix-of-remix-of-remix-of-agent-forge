@@ -13,6 +13,8 @@ export function useTheme() {
     setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
   }, []);
   function toggle() {
+    // The welcome tour overlays the page; close it so this tap always lands.
+    window.dispatchEvent(new CustomEvent("appforge-dismiss-tour"));
     const next: Theme = theme === "dark" ? "light" : "dark";
     document.documentElement.classList.toggle("dark", next === "dark");
     localStorage.setItem(KEY, next);
