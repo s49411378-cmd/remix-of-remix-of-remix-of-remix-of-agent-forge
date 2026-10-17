@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { requestDeposit } from "@/lib/wallet.functions";
+import { HackerLoader } from "@/components/effects/HackerLoader";
 import { QueryFeedback } from "@/components/QueryFeedback";
 
 export const Route = createFileRoute("/wallet")({
@@ -178,7 +179,7 @@ function DepositDialog({ open, onOpenChange, upi, min }: { open: boolean; onOpen
             <div className="space-y-1.5"><Label htmlFor="utr">UTR / Transaction ID</Label><Input id="utr" required value={utr} onChange={(e) => setUtr(e.target.value)} maxLength={64} placeholder="12-digit UTR" autoFocus /></div>
             <div className="flex gap-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setStep("pay")}>Back</Button>
-              <Button type="submit" variant="hero" className="flex-1" disabled={loading}>{loading ? "Submitting…" : "Submit"}</Button>
+              <Button type="submit" variant="hero" className="flex-1" disabled={loading}>{loading ? <HackerLoader compact label="Submitting payment" /> : "Submit"}</Button>
             </div>
           </form>
         )}

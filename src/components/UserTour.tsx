@@ -1,3 +1,4 @@
+import { useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Home, Wallet, Package, Trophy, User, X, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
@@ -37,6 +38,7 @@ const STEPS = [
 ] as const;
 
 export function UserTour() {
+  const { pathname } = useLocation();
   const { data: settings } = useSiteSettings();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -59,7 +61,7 @@ export function UserTour() {
     return () => window.removeEventListener("appforge-dismiss-tour", onDismiss);
   }, []);
 
-  if (!open || visibleAnnouncement(settings)) return null;
+  if (!open || pathname === "/auth" || pathname.startsWith("/admin") || visibleAnnouncement(settings)) return null;
 
   function finish() {
     try {

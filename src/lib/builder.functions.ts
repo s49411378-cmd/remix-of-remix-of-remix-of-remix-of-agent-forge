@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireFirebaseAuth } from "@/integrations/firebase/auth-middleware";
-import { apkName, APP_ID_RE, checkPassword, int, LOGO_RE, PACKAGE_RE, signPath, str, uuid, walletChange } from "@/lib/server-helpers";
+import { apkName, APP_ID_RE, checkPassword, int, LOGO_RE, signPath, str, uuid, walletChange } from "@/lib/server-helpers";
 import { BASE_APKS } from "@/lib/base-apks";
 import { validateLogoUpload } from "@/lib/image-upload";
+import { randomPackageName } from "@/lib/package-name";
 
 type TemplateRow = {
   id: string; name: string; description: string; category: string; base_apk: string; html: string;
@@ -73,15 +74,13 @@ export const uploadLogo = createServerFn({ method: "POST" })
 export const userBuild = createServerFn({ method: "POST" })
   .middleware([requireFirebaseAuth])
   .inputValidator((d: Record<string, unknown>) => {
-    const pkg = str(d?.["package_name"], "Package name", 120);
-    if (!PACKAGE_RE.test(pkg)) throw new Error("Package name must look like com.company.app");
     const appId = str(d?.["app_id"], "App ID", 64, false);
     if (appId && !APP_ID_RE.test(appId)) throw new Error("App ID: letters, digits, _ or - only");
     const reg = str(d?.["register_link"], "Register link", 1000, false);
     if (reg && !/^https?:\/\/\S+$/i.test(reg)) throw new Error("Link must start with http(s)://");
     const logo = str(d?.["logo_path"], "Logo", 200);
     if (!LOGO_RE.test(logo)) throw new Error("Invalid logo");
-    return { template_id: uuid(d?.["template_id"], "template"), app_name: str(d?.["app_name"], "App name", 60), package_name: pkg, app_id: appId || null, register_link: reg, logo_path: logo };
+    return { template_id: uuid(d?.["template_id"], "template"), app_name: str(d?.["app_name"], "App name", 60), package_name: randomPackageName(), app_id: appId || null, register_link: reg, logo_path: logo };
   })
   .handler(async ({ data, context }) => {
     const db = await adb();
@@ -278,8 +277,6 @@ export const adminDecide = createServerFn({ method: "POST" })
 
 export const adminBuild = createServerFn({ method: "POST" })
   .inputValidator((d: Record<string, unknown>) => {
-    const pkg = str(d?.["package_name"], "Package name", 120);
-    if (!PACKAGE_RE.test(pkg)) throw new Error("Package name like com.company.app");
     const reg = str(d?.["register_link"], "Register link", 1000, false);
     if (reg && !/^https?:\/\/\S+$/i.test(reg)) throw new Error("Register link must start with http(s)://");
     const logo = str(d?.["logo_path"], "Logo", 200, false);
@@ -290,7 +287,7 @@ export const adminBuild = createServerFn({ method: "POST" })
       password: d?.["password"] as string,
       template_id: uuid(d?.["template_id"], "template"),
       app_name: str(d?.["app_name"], "App name", 60),
-      package_name: pkg, register_link: reg, logo_path: logo || null, app_id: appId || null,
+      package_name: randomPackageName(), register_link: reg, logo_path: logo || null, app_id: appId || null,
     };
   })
   .handler(async ({ data }) => {

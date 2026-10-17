@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { StatusBadge } from "@/components/StatusBadge";
+import { HackerLoader } from "@/components/effects/HackerLoader";
 import { QueryFeedback } from "@/components/QueryFeedback";
 import { withRequestTimeout } from "@/lib/request-timeout";
 import { useAuth } from "@/hooks/useAuth";
@@ -167,7 +168,7 @@ function ProfileBody() {
           <span className="absolute inset-0 grid place-items-center bg-foreground/40 text-background opacity-0 transition group-hover:opacity-100">
             <Camera className="size-6" />
           </span>
-          {uploading && <span className="absolute inset-0 grid place-items-center bg-foreground/50 text-xs text-background">Uploading…</span>}
+          {uploading && <span className="absolute inset-0 grid place-items-center bg-foreground/50 text-xs text-background"><HackerLoader compact label="Uploading photo" className="text-xs" /></span>}
         </button>
         <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onPhoto(e.target.files?.[0])} />
         <div className="min-w-0 flex-1">
@@ -202,7 +203,7 @@ function ProfileBody() {
           </div>
         </div>
         <Button variant="hero" onClick={onSave} disabled={saving || !name.trim()}>
-          <Save className="size-4" /> {saving ? "Saving…" : "Save changes"}
+          {saving ? <HackerLoader compact label="Saving changes" /> : <><Save className="size-4" /> Save changes</>}
         </Button>
       </section>
 
@@ -213,7 +214,7 @@ function ProfileBody() {
           <Input type="password" placeholder="Confirm new password" value={pw2} onChange={(e) => setPw2(e.target.value)} />
         </div>
         <Button variant="secondary" onClick={onPassword} disabled={pwBusy || !pw}>
-          {pwBusy ? "Updating…" : "Update password"}
+          {pwBusy ? <HackerLoader compact label="Updating password" /> : "Update password"}
         </Button>
       </section>
 
