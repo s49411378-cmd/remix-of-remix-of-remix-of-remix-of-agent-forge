@@ -1,5 +1,6 @@
 
 import { createFileRoute } from "@tanstack/react-router";
+import { signPath } from "@/lib/server-helpers";
 
 // Called by the GitHub Actions workflows (build + encrypt).
 // GET  ?id=<request_id>  -> returns template HTML + app info for the build
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/api/public/build")({
         const req = await db.dbGet<Record<string, string | null>>(`buildRequests/${id}`);
         if (!req) return json({ error: "Not found" }, 404);
         const t = req["template_id"] ? await db.dbGet<{ base_apk?: string; html?: string }>(`templates/${req["template_id"]}`) : null;
-        const logo_url = req["logo_path"] ? await db.storageSignUrl(req["logo_path"], 3600) : null;
+        const logo_url = await signPath(req["logo_path"]);
         return json({ app_name: req["app_name"], package_name: req["package_name"], register_link: req["register_link"], logo_url, base_apk: t?.base_apk ?? "bingo", html: t?.html ?? "", app_id: req["app_id"] ?? null });
       },
       POST: async ({ request }) => {

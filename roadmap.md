@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Current task
+- [ ] Fix build-logo upload 404, verify real image upload/readback, and update Vercel.
 - [x] Removed favicon and visible Lovable branding; deployed to Vercel tineshbuildercode, live page verified clean.
 - [x] Add admin-editable website name and visitor announcements; verified real admin save/readback, fresh visitor display, dismiss/return, disabled state and mobile layout; six targeted tests passed. Vercel not updated in this task.
 - [x] Create root agent_memory.md with safe project context; deploy latest fixes to Vercel and verify live signup, profile saving, wallet, leaderboard and orders.

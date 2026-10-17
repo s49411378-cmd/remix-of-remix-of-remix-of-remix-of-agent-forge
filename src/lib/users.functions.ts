@@ -80,17 +80,8 @@ export const uploadAvatar = createServerFn({ method: "POST" })
     return { image };
   })
   .handler(async ({ data, context }) => {
-    const key = process.env["IMGBB_API_KEY"];
-    if (!key) throw new Error("Photo upload is not configured");
-    const form = new FormData();
-    form.append("image", data.image);
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${key}`, { method: "POST", body: form });
-    const json = (await res.json().catch(() => null)) as { data?: { display_url?: string; url?: string } } | null;
-    const url = json?.data?.display_url || json?.data?.url;
-    if (!res.ok || !url) {
-      console.error("imgbb upload failed", res.status, json);
-      throw new Error("Photo upload failed. Please try again.");
-    }
+    const { uploadImage } = await import("@/lib/image-upload");
+    const url = await uploadImage(data.image);
     const db = await adb();
     await db.dbUpdate(`profiles/${context.userId}`, { avatar_url: url });
     return { url };
