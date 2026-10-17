@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { withRequestTimeout } from "@/lib/request-timeout";
 import { useSiteName } from "@/hooks/useSiteSettings";
+import { UserBackground } from "@/components/effects/UserBackground";
 
 export function Logo({ to = "/" }: { to?: "/" }) {
   const name = useSiteName();
@@ -111,7 +112,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const { data: wallet } = useWallet();
   return (
-    <div className="min-h-screen pb-28">
+    <div className="user-shell min-h-screen pb-28">
+      <UserBackground />
       <header className="sticky top-0 z-40 border-b border-glass-border glass-panel">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 sm:h-16">
           <Logo />

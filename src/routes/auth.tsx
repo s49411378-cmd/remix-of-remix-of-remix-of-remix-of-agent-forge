@@ -1,8 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { LoginScreen } from "@/components/LoginScreen";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
 import { fbAuth, firebaseReady } from "@/integrations/firebase/client";
 
@@ -54,19 +53,5 @@ function AuthPage() {
       toast.error(friendly(err));
     }
   }
-  return (
-    <main className="grid min-h-screen place-items-center px-4 py-10">
-        <form onSubmit={submit} className="surface w-full max-w-sm space-y-3 p-6">
-          <h1 className="text-2xl font-bold">{mode === "login" ? "Welcome back" : "Create account"}</h1>
-          {mode === "signup" && <Input name="name" placeholder="Your name" required />}
-          <Input name="email" type="email" placeholder="Email" required />
-          <Input name="password" type="password" placeholder="Password" required minLength={6} />
-          <Button type="submit" variant="hero" className="w-full" disabled={loading}>{mode === "login" ? "Login" : "Sign up"}</Button>
-          <Button type="button" variant="outline" className="w-full" onClick={google}>Continue with Google</Button>
-          <button type="button" className="w-full text-sm text-muted-foreground" onClick={() => setMode(mode === "login" ? "signup" : "login")}>
-            {mode === "login" ? "New here? Create an account" : "Already have an account? Login"}
-          </button>
-        </form>
-    </main>
-  );
+  return <LoginScreen mode={mode} loading={loading} onSubmit={submit} onGoogle={google} onModeChange={() => setMode(mode === "login" ? "signup" : "login")} />;
 }

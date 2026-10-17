@@ -16,3 +16,4 @@
 - Keep website identity and visitor announcements in Firebase settings/main, expose only public fields through the shared site-settings query, and authorize every settings write server-side; one source keeps admin changes consistent across visitor pages.
 - Upload build logos through authenticated ImgBB server calls and store owner-scoped path-to-URL mappings in Firebase mediaFiles; resolve those mappings for orders and build callbacks because the configured Cloud Storage bucket is unavailable.
 - Shared surface and glass utilities own card/control treatment across routes; legacy clay classes are glass aliases to keep existing views consistent, with standard backdrop-filter only for production compatibility.
+- Keep decorative animations in reusable effects components with browser work inside effects and reduced-motion handling; user backgrounds mount in AppShell, while login media stays on the auth page so authentication and admin behavior remain unchanged.
