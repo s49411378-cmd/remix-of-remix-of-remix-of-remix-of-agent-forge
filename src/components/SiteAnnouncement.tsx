@@ -11,7 +11,7 @@ export function SiteAnnouncement() {
   const revision = JSON.stringify([data.announcement_title, data.announcement_message]);
   if (dismissed === revision) return null;
   return (
-    <aside aria-label="Website announcement" className="border-b border-primary/25 bg-accent text-accent-foreground">
+    <aside aria-label="Website announcement" className="border-b border-primary/25 glass-panel text-foreground">
       <div className="mx-auto flex max-w-6xl items-start gap-3 px-4 py-4">
         <Megaphone className="mt-0.5 size-5 shrink-0 text-primary" />
         <div className="min-w-0 flex-1 break-words">

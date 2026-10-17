@@ -47,13 +47,13 @@ function WalletPage() {
   if (!data) return <QueryFeedback label="your wallet" failed={isError} retry={() => refetch()} />;
   return (
     <>
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-card p-6 text-primary-foreground shadow-glow">
+      <div className="surface relative overflow-hidden p-6 text-foreground">
         <p className="text-sm opacity-80">Available balance</p>
-        <p className="mt-1 font-display text-4xl font-bold">₹{data.balance}</p>
+        <p className="mt-1 font-display text-4xl font-bold text-primary">₹{data.balance}</p>
         <div className="mt-5 flex gap-2">
-          <Button variant="secondary" onClick={() => setOpen(true)}><Plus className="size-4" /> Add balance</Button>
+          <Button variant="hero" onClick={() => setOpen(true)}><Plus className="size-4" /> Add balance</Button>
           {data.support_link && (
-            <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground" asChild>
+            <Button variant="ghost" asChild>
               <a href={data.support_link} target="_blank" rel="noreferrer"><LifeBuoy className="size-4" /> Help</a>
             </Button>
           )}
